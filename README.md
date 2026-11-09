@@ -62,8 +62,9 @@ Remove-Item Env:API_URL
 | `feature/multiplicar` | Conservada | El cambio que chocó con `dividir` |
 | `feature/potencia` | Fusionada en `main` | Cambio integrado al estilo de un colaborador |
 | `feature/ambientes` | Fusionada en `main` | Configuración por ambiente, pipeline y matriz de Python |
-| `prueba/romper-ci` | Fusionada en `main` | Error deliberado y `git revert` que lo corrige |
+| `prueba/romper-ci` | Fusionada en `main` | Primer error deliberado y `git revert`, dentro del historial |
 | `feature/entrega1-docker` | Fusionada en `main` | Dos contenedores comunicados y esta documentación |
+| `prueba/checks-ci` | Fusionada en `main` | Pull request [#1](https://github.com/DomVes/calculadora-ci/pull/1): check rojo y después verde |
 
 Historial:
 
@@ -80,22 +81,16 @@ Las respuestas a las preguntas de la guía están en [docs/respuestas-guia.md](d
 | Commits claros y `.gitignore` correcto | Mensajes en español y `.gitignore` del primer commit |
 | Conflicto resuelto sin perder cambios | `Fusiona multiplicar con dividir`: `dividir` y `multiplicar` conviven, separadas por dos líneas en blanco |
 | Reversión sin reescribir el historial | `Ajusta sumar` sigue en el log; el commit siguiente es `Revert "Ajusta sumar"` |
-| Pull request revisado y fusionado | Rama `feature/potencia`, fusionada en `674b269`. El comentario de revisión en GitHub falta porque `gh` todavía no tiene sesión en este equipo |
+| Pull request revisado y fusionado | [#1](https://github.com/DomVes/calculadora-ci/pull/1), con dos comentarios y fusión `974d46b`. El cambio del colaborador está en `feature/potencia`, fusionada en `674b269` |
 | Configuración por ambiente | `config.py`, `test_config.py` y la tabla en `docs/respuestas-guia.md` |
-| Pipeline que detecta el error y luego pasa | En local, `Rompe sumar a proposito` deja `test_sumar` en rojo (1 failed, 8 passed) y `Revert "Rompe sumar a proposito"` lo devuelve a 9 passed. En GitHub Actions el check rojo y el verde aparecen al publicar esa secuencia en un pull request |
+| Pipeline que detecta el error y luego pasa | En el PR #1, *Ejecutar pruebas* falló en Python 3.12 y 3.13 ([run rojo](https://github.com/DomVes/calculadora-ci/actions/runs/42637037227)) y, tras el revert, pasó en las dos versiones ([run verde](https://github.com/DomVes/calculadora-ci/actions/runs/42637119575)) |
 
 ## Primera entrega del módulo
 
 La lectura del módulo pide, en la semana 3, el proyecto en GitHub y **dos contenedores comunicados**. Este repositorio es esa base. La comunicación es HTTP: `cliente` espera a `api` y le envía las operaciones. Jenkins, Travis CI y Codeship corresponden a las entregas 2 y 3; no forman parte de este corte.
 
-## Publicar en GitHub
+## Repositorio
 
-El remoto todavía no está conectado. Cuando la cuenta esté autenticada, desde esta carpeta:
+El remoto `origin` es [github.com/DomVes/calculadora-ci](https://github.com/DomVes/calculadora-ci). Se creó vacío, sin README ni `.gitignore` de GitHub, y después se publicó `main` junto con las ramas de trabajo.
 
-```powershell
-gh auth login --hostname github.com --git-protocol https --web
-gh repo create calculadora-ci --public --source=. --remote=origin --push
-git push -u origin feature/multiplicar feature/potencia feature/ambientes feature/entrega1-docker prueba/romper-ci
-```
-
-El repositorio de GitHub debe crearse **sin** README ni `.gitignore`, para que el primer `push` de `main` no sea rechazado. Después de publicarlo, cada push y cada pull request hacia `main` ejecutan `.github/workflows/ci.yml`.
+El pull request revisado es el [número 1](https://github.com/DomVes/calculadora-ci/pull/1). Su primer check quedó rojo y el siguiente, después de `git revert`, quedó verde.

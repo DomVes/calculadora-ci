@@ -64,7 +64,7 @@ El equipo puede seguir haciendo commits, ramas y pruebas en local. Cuando el ser
 
 En este trabajo la rama del colaborador es `feature/potencia` (`b82b5d6`, *Agrega potencia*). Añade `potencia(base, exponente)` y cubre con pruebas `multiplicar`, `dividir` y `potencia`, que hasta ese commit no tenían prueba. La fusión en `main` es `674b269` (*Fusiona rama feature/potencia*).
 
-El ejercicio pide además un comentario de revisión en el pull request de GitHub. Esa evidencia aparece al publicar el remoto; en esta máquina `gh` aún no tiene una sesión iniciada. Los pasos están al final del `README.md`.
+El pull request con comentarios de revisión es el [número 1](https://github.com/DomVes/calculadora-ci/pull/1). Ahí se pidió no fusionar mientras `sumar` restaba y, ya con el revert, se dejó constancia de que Python 3.12 y 3.13 habían pasado. GitHub lo fusionó en `974d46b`.
 
 ## Ejercicio 5. Tabla de ambientes
 
@@ -93,4 +93,9 @@ En el ejercicio 1 la instalación de pytest y `python -m pytest` se hacían a ma
 
 El commit `30c13b9` agrega el pipeline con Python 3.13. El commit `3560451` agrega la matriz. La fusión a `main` es `54229f4`.
 
-La rama `prueba/romper-ci` vuelve a cambiar `sumar` para que reste. Ese commit, `06375f3` (*Rompe sumar a proposito*), deja la suite en 1 failed y 8 passed. `e70141a` (*Revert "Rompe sumar a proposito"*) la devuelve a 9 passed sin borrar el commit del error. En GitHub, el primer push de esa rama marca el check en rojo y el push del revert lo pasa a verde. Aquí esa secuencia quedó verificada con pytest en local; los checks de Actions se generan al publicar el pull request.
+La rama `prueba/romper-ci` vuelve a cambiar `sumar` para que reste. Ese commit, `06375f3` (*Rompe sumar a proposito*), deja la suite en 1 failed y 8 passed. `e70141a` (*Revert "Rompe sumar a proposito"*) la devuelve a 9 passed sin borrar el commit del error.
+
+Esa rama ya estaba dentro de `main` cuando el repositorio se publicó, así que Actions no podía marcarla como un pull request nuevo. La repetición que sí ejecutó el servicio es `prueba/checks-ci`, en el [pull request 1](https://github.com/DomVes/calculadora-ci/pull/1):
+
+- [Check rojo](https://github.com/DomVes/calculadora-ci/actions/runs/42637037227): el paso *Ejecutar pruebas* falló en Python 3.12 y en 3.13.
+- [Check verde](https://github.com/DomVes/calculadora-ci/actions/runs/42637119575): el mismo paso pasó en las dos versiones después del revert.
