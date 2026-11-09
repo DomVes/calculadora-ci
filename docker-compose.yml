@@ -1,17 +1,24 @@
 name: calculadora-ci
 
 services:
-  api:
+  calculadora:
     build:
       context: .
-      dockerfile: api/Dockerfile
-    image: calculadora-api:entrega1
+      dockerfile: servicios/calculadora/Dockerfile
+    image: calculadora:entrega1
+    env_file:
+      - .env
     environment:
-      APP_ENV: desarrollo
+      APP_ENV: ${APP_ENV:-desarrollo}
+      BITACORA_URL: http://bitacora:8080
+      BITACORA_TOKEN: ${BITACORA_TOKEN}
     ports:
       - "5000:5000"
     networks:
       - calculadora_red
+    depends_on:
+      bitacora:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -23,22 +30,42 @@ services:
       interval: 5s
       timeout: 3s
       retries: 12
-      start_period: 3s
+      start_period: 5s
 
-  cliente:
+  bitacora:
     build:
       context: .
-      dockerfile: cliente/Dockerfile
-    image: calculadora-cliente:entrega1
+      dockerfile: servicios/bitacora/Dockerfile
+    image: bitacora:entrega1
+    env_file:
+      - .env
     environment:
-      API_URL: http://api:5000
-    depends_on:
-      api:
-        condition: service_healthy
+      DATOS_DIR: /datos
+      BITACORA_TOKEN: ${BITACORA_TOKEN}
+    volumes:
+      - bitacora_datos:/datos
+    ports:
+      - "8080:8080"
     networks:
       - calculadora_red
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/salud')",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
 
 networks:
   calculadora_red:
     name: calculadora_red
     driver: bridge
+
+volumes:
+  bitacora_datos:
+    name: bitacora_datos

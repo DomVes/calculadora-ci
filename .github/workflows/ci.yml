@@ -22,3 +22,45 @@ jobs:
         run: python -m pip install pytest
       - name: Ejecutar pruebas
         run: python -m pytest
+
+  imagenes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Preparar variables
+        run: cp .env.example .env
+      - name: Construir imagenes
+        run: docker compose build
+      - name: Levantar contenedores
+        run: docker compose up -d --wait
+      - name: Probar ida y vuelta
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          datos = json.dumps({"operacion": "sumar", "a": 2, "b": 3}).encode()
+          peticion = urllib.request.Request(
+              "http://127.0.0.1:5000/operar",
+              data=datos,
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(peticion, timeout=10) as respuesta:
+              cuerpo = json.load(respuesta)
+          print(json.dumps(cuerpo, ensure_ascii=False, indent=2))
+          if cuerpo.get("destino") != "http://bitacora:8080":
+              raise SystemExit("La calculadora no uso el nombre del servicio bitacora")
+          if cuerpo.get("resultado") != 5:
+              raise SystemExit("Resultado inesperado")
+          if cuerpo["guardado"]["id"] != cuerpo["leido"]["id"]:
+              raise SystemExit("El registro leido no es el que se guardo")
+          if cuerpo["leido"]["resultado"] != 5:
+              raise SystemExit("La bitacora no devolvio el dato guardado")
+          print("Comunicacion correcta: guardado y leido por http://bitacora:8080")
+          PY
+      - name: Listar contenedores y red
+        run: |
+          docker compose ps
+          docker network inspect calculadora_red
+      - name: Apagar
+        if: always()
+        run: docker compose down -v

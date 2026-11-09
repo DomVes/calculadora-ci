@@ -13,29 +13,29 @@ Resultado esperado en `main`: 9 pruebas en verde.
 
 ## Cómo levantar los dos contenedores
 
-Hace falta Docker Desktop en ejecución. Los contenedores `api` y `cliente` comparten la red `calculadora_red`. El cliente llama a `http://api:5000`; ese nombre solo existe dentro de la red de Compose.
+Hace falta Docker Desktop en ejecución. Son dos servicios con papeles distintos:
+
+- `calculadora` es la aplicación. Publica el puerto 5000.
+- `bitacora` guarda cada operación en un volumen y la devuelve cuando se le pide.
+
+La aplicación llama a `http://bitacora:8080`. Ese nombre solo existe dentro de la red `calculadora_red`. La clave está en `.env`, que no se sube al repositorio.
 
 ```powershell
-docker compose up --build --abort-on-container-exit --exit-code-from cliente
+Copy-Item .env.example .env
+docker compose build
+docker compose up -d
+docker compose ps
+docker network inspect calculadora_red
+Invoke-RestMethod -Method Post -Uri http://localhost:5000/operar -ContentType "application/json" -Body '{"operacion":"sumar","a":2,"b":3}'
 ```
 
-El cliente termina con código 0 cuando las cinco operaciones responden bien. El detalle del diseño está en [docs/entrega-1.md](docs/entrega-1.md).
-
-Sin Docker se puede comprobar el mismo protocolo en la máquina:
+La respuesta debe traer `destino` igual a `http://bitacora:8080`, y el mismo registro en `guardado` y en `leido`. Para apagar:
 
 ```powershell
-python -m pip install -r requirements.txt
-$env:APP_ENV = "desarrollo"
-python -m api.app
+docker compose down
 ```
 
-En otra terminal:
-
-```powershell
-$env:API_URL = "http://127.0.0.1:5000"
-python cliente/cliente.py
-Remove-Item Env:API_URL
-```
+El detalle está en [docs/entrega-1.md](docs/entrega-1.md). Las capturas del PDF están indicadas en [docs/como-armar-el-pdf.md](docs/como-armar-el-pdf.md).
 
 ## Mapa del repositorio
 
@@ -45,12 +45,14 @@ Remove-Item Env:API_URL
 | `test_calculadora.py` | Pruebas de esas operaciones |
 | `config.py` | Configuración de desarrollo, pruebas y producción |
 | `test_config.py` | Pruebas de ambientes |
-| `.github/workflows/ci.yml` | GitHub Actions: Python 3.12 y 3.13 |
-| `api/` | Contenedor que publica la calculadora por HTTP |
-| `cliente/` | Contenedor que consume la API y valida las respuestas |
-| `docker-compose.yml` | Red y arranque de los dos contenedores |
+| `.github/workflows/ci.yml` | Pruebas en Python 3.12 y 3.13, y construcción de las dos imágenes |
+| `.env.example` | Variables de ejemplo. La clave real va en `.env`, que no se versiona |
+| `servicios/calculadora/` | Contenedor de la aplicación |
+| `servicios/bitacora/` | Contenedor que guarda y devuelve cada operación |
+| `docker-compose.yml` | Red, puertos, volumen, variables y `depends_on` |
 | `docs/respuestas-guia.md` | Respuestas de la guía y tabla de ambientes |
 | `docs/entrega-1.md` | Evidencia de la entrega 1 |
+| `docs/como-armar-el-pdf.md` | Orden de las capturas, diagrama, conclusiones y referencias APA |
 
 `.gitignore` excluye `__pycache__/`, `.pytest_cache/` y `.env`.
 
@@ -87,7 +89,7 @@ Las respuestas a las preguntas de la guía están en [docs/respuestas-guia.md](d
 
 ## Primera entrega del módulo
 
-La lectura del módulo pide, en la semana 3, el proyecto en GitHub y **dos contenedores comunicados**. Este repositorio es esa base. La comunicación es HTTP: `cliente` espera a `api` y le envía las operaciones. Jenkins, Travis CI y Codeship corresponden a las entregas 2 y 3; no forman parte de este corte.
+La entrega del 10 de noviembre pide dos contenedores comunicados y un PDF con capturas. `calculadora` guarda cada operación en `bitacora` y la vuelve a leer, usando el nombre del servicio dentro de `calculadora_red`. El PDF se sube en la plataforma, junto con el enlace de este repositorio. Jenkins, Travis CI y Codeship corresponden a las entregas siguientes.
 
 ## Repositorio
 
