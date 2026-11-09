@@ -35,7 +35,7 @@ La respuesta debe traer `destino` igual a `http://bitacora:8080`, y el mismo reg
 docker compose down
 ```
 
-El detalle está en [docs/entrega-1.md](docs/entrega-1.md). Las capturas del PDF están indicadas en [docs/como-armar-el-pdf.md](docs/como-armar-el-pdf.md).
+El detalle está en [docs/entrega-1.md](docs/entrega-1.md). El PDF para subir en la plataforma, con las capturas, el diagrama, las conclusiones y las referencias, es [docs/Entrega1_Docker_evidencias.pdf](docs/Entrega1_Docker_evidencias.pdf).
 
 ## Mapa del repositorio
 

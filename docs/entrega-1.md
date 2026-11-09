@@ -48,3 +48,5 @@ En la respuesta, `destino` debe ser `http://bitacora:8080` y `leido` debe repeti
 ## Pipeline
 
 El job `imagenes` de `.github/workflows/ci.yml` copia `.env.example` a `.env`, ejecuta `docker compose build`, levanta los dos contenedores y hace la misma operación de guardar y leer. El check queda verde solo si esa ida y vuelta funciona.
+
+Las capturas de esa ejecución en el equipo, el diagrama, las conclusiones y las referencias en APA están en `docs/Entrega1_Docker_evidencias.pdf`. Ese es el archivo que se sube en la plataforma, junto con el enlace del repositorio.
