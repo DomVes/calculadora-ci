@@ -1,0 +1,44 @@
+name: calculadora-ci
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: calculadora-api:entrega1
+    environment:
+      APP_ENV: desarrollo
+    ports:
+      - "5000:5000"
+    networks:
+      - calculadora_red
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/salud')",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 3s
+
+  cliente:
+    build:
+      context: .
+      dockerfile: cliente/Dockerfile
+    image: calculadora-cliente:entrega1
+    environment:
+      API_URL: http://api:5000
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - calculadora_red
+
+networks:
+  calculadora_red:
+    name: calculadora_red
+    driver: bridge
