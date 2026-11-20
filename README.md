@@ -37,6 +37,16 @@ docker compose down
 
 El detalle está en [docs/entrega-1.md](docs/entrega-1.md). El PDF para subir en la plataforma, con las capturas, el diagrama, las conclusiones y las referencias, es [docs/Entrega1_Docker_evidencias.pdf](docs/Entrega1_Docker_evidencias.pdf).
 
+## Segunda entrega: Jenkins
+
+Jenkins opera las mismas pruebas, la construcción de las imágenes y la prueba de comunicación. La interfaz usa el puerto 8081 para no ocupar el 8080 de la bitácora. El documento con las características de esa implementación, en formato APA, es [docs/Entrega2_Jenkins_caracteristicas.pdf](docs/Entrega2_Jenkins_caracteristicas.pdf).
+
+```powershell
+docker compose -f docker-compose.jenkins.yml up -d --build
+```
+
+La contraseña inicial aparece en `docker compose -f docker-compose.jenkins.yml logs jenkins` y no se guarda en el repositorio.
+
 ## Mapa del repositorio
 
 | Ruta | Rol |

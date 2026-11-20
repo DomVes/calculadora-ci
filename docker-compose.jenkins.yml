@@ -1,0 +1,25 @@
+name: calculadora-jenkins
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: jenkins/Dockerfile
+    image: calculadora-jenkins:entrega2
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - jenkins_red
+
+networks:
+  jenkins_red:
+    name: jenkins_red
+    driver: bridge
+
+volumes:
+  jenkins_home:
+    name: jenkins_home
