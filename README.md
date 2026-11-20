@@ -39,13 +39,7 @@ El detalle está en [docs/entrega-1.md](docs/entrega-1.md). El PDF para subir en
 
 ## Segunda entrega: Jenkins
 
-Jenkins opera las mismas pruebas, la construcción de las imágenes y la prueba de comunicación. La interfaz usa el puerto 8081 para no ocupar el 8080 de la bitácora. El documento con las características de esa implementación, en formato APA, es [docs/Entrega2_Jenkins_caracteristicas.pdf](docs/Entrega2_Jenkins_caracteristicas.pdf).
-
-```powershell
-docker compose -f docker-compose.jenkins.yml up -d --build
-```
-
-La contraseña inicial aparece en `docker compose -f docker-compose.jenkins.yml logs jenkins` y no se guarda en el repositorio.
+La guía del 17 de noviembre pide el ejercicio de inventario, con Jenkins y GitHub Actions. Ese trabajo está en https://github.com/DomVes/inventario-ci. El PDF para subir, en formato APA, es [docs/Entrega2_Jenkins_caracteristicas.pdf](docs/Entrega2_Jenkins_caracteristicas.pdf).
 
 ## Mapa del repositorio
 
